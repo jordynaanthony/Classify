@@ -1,0 +1,80 @@
+.UnitName{
+    font-family: "Times New Roman", Times, serif;
+	font-size: 24px;
+	font-weight: bold;
+	background-color: #FFCC33;
+	padding-top: 15px;
+	padding-right: 10px;
+	padding-bottom: 10px;
+	padding-left: 10px;
+}
+
+.SectionStart {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 2px;
+	background-color: #999999;
+	height: 2px;
+}
+
+.SectionOdd {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	padding-top: 5px;
+	padding-right: 5px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+	background-color: #FFFFCC;
+	text-indent: 10px;
+}
+
+.CourseNum {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 18px;
+	background-color: #CCFFFF;
+	padding-top: 15px;
+	padding-right: 4px;
+	padding-bottom: 4px;
+	padding-left: 10px;
+}
+
+.CourseName {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 18px;
+	font-weight: bold;
+	background-color: #AAFFAA;
+	padding-top: 15px;
+	padding-right: 4px;
+	padding-bottom: 4px;
+	padding-left: 4px;
+}
+
+.tablink:hover {
+	background-color: #777;
+}
+
+.tabcontent {
+	display: none;
+	padding: 50px;
+	text-align: center;
+}
+
+table, td {
+	border: 1px solid black;
+	border-collapse: collapse;
+}
+td {
+	padding: 10px;
+	background-color: #FDDF95;
+	text-align: left;
+	font-size: small;
+}
+
+/* button {
+	display: block;
+} */
+
+/* .subject_search {
+  	float: left;
+  	cursor: pointer;
+} */
+	
