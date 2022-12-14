@@ -1,4 +1,4 @@
-# Classify-CS3240-Group-Project-F22
+# Classify
 I worked on this web application on a team of 4 of my peers (Sean Miller, Jack Goodman, Yuna Lee, Hanzhang Zhao) during the Fall 2022 semester for the Advanced Software Development Methods class. Our assignment was to design a web application, which we named Classify, that would help fellow Universty of Virginia students find course offerings and build a schedule. We also implemented friending features that would allow users to view their friends' schedules and vote and/or comment on them. We incoporated the Google OAuth API to allow any user to sign in with an existing Google account. We used Django and Bootstrap to implement this application.
 
 My role on the team was the UX Manager, so I handled the design and implementation of most of the appearance of the project. This mostly entailed planning workflows, which included the layout and organization of information and services, and creating the mask over the application. In designing this appearance, I tried to choose colors and shapes that matched standard practices.
