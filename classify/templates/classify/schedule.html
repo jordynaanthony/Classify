@@ -1,0 +1,392 @@
+{% load socialaccount %}
+{% load bootstrap5 %}
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type="text/css">
+      body { background: #E5EEE1 !important; }
+      .card{
+        margin-left: 5px;
+        margin-right: 5px;
+        margin-bottom: 10px;
+        width: max-content;
+      }
+      hr.rounded {
+        border-top: 5px solid #4c4c4c;
+        border-radius: 5px;
+      }
+      hr.solid {
+        border-top: 3px solid #b2b2b2;
+      }
+      .dropdown-menu {
+        width: max-content;
+      }
+   </style>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    {% comment %} <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <!-- these three new bootstraps are added to make sure the message works --> {% endcomment %}
+    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+    <!-- map links -->
+    <!-- <link rel="stylesheet" href="{% static 'classify/map.css' %}"></link> -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+    <script src='https://www.google.com/recaptcha/api.js?render={{recaptcha_site_key}}'></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var google_api_key = "{{google_api_key|safe}}";        
+    </script>
+    <script src='{% static "classify/google_places.js" %}?{% now "U" %}'></script>
+  </head>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg" style="background-color: #C6E9F4;">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/classify">&emsp;<b>Classify</b>&nbsp;&nbsp;</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/classify">Browse</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/classify/user">Favorites</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/classify/user/schedule">Schedule</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Friends
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/classify/user/friends">My Friends</a></li>
+              <li><a class="dropdown-item" href="/classify/user/friend_search">Search for Friends</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Profile pic dropdown -->
+      <div class="btn-group dropstart">
+        <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+          {% if user.socialaccount_set.all.0.get_avatar_url %}
+          <img src="{{ user.socialaccount_set.all.0.get_avatar_url }}" alt="profile picture" width="32" height="32" class="rounded-circle">
+          {% else %}
+          <img src="data:image/png;base64,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" alt="profile picture" width="32" height="32" class="rounded-circle">
+          {% endif %}
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="dropdown01">
+          <li><h6 class="dropdown-header">
+            <b>Hello, {{ user.first_name }}.</b>
+            <br>
+            Username: {{ user.username }}
+            <br>
+            Email: {{ user.email }}
+          </h6></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="/classify">Browse</a></li>
+          <li><a class="dropdown-item" href="/classify/user">Favorites</a></li>
+          <li><a class="dropdown-item" href="/classify/user/schedule">Schedule</a></li>
+          <li><a class="dropdown-item" href="/classify/user/friends">My Friends</a></li>
+          <li><a class="dropdown-item" href="/classify/user/friend_search">Search for Friends</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="/accounts/logout">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <body>
+    {% if user.is_authenticated %}
+
+      <!-- displaying the message at the top of the page -->
+      {% for message in messages %}
+        <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            {{ message | safe }}
+        </div>
+      {% endfor %}
+        
+      <!-- title -->
+      <div class="container">
+        <h1 class="text-center">Schedule</h1>
+        <br>
+        <div class="alert alert-primary" role="alert" >
+          You can add classes from the <a href="/classify/user" class="alert-link">Favorites</a> tab and view your friends' schedules from the <a href="/classify/user/friends" class="alert-link">My Friends</a> tab.
+        </div>
+        <hr class="rounded">
+      </div>
+
+      <!-- Weekdays -->
+      <div class="container">
+
+        <!-- Monday -->
+        <div class="container">
+          <h2>Monday</h2>
+          <form method="post">
+            <div class="row">
+              {% for p in monday_courses %}
+                {% csrf_token %}
+                <div class="card" style="width: 28rem;">
+                  <div class="card-body">
+                    <h4 class="card-title">{{ p.subject }} {{ p.catalog_number }} ({{ p.component }})</h4>
+                    <p class="card-text">{{p.description}}</p>
+                  </div>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Instructor: {{ p.instructor_name }}</li>
+                    <li class="list-group-item">Meet: {{ p.meetings_days }} {{ p.meetings_start_time }} - {{ p.meetings_end_time }}</li>
+                    <li class="list-group-item">Seats Available: {{ p.enrollment_available }}/{{ p.class_capacity }}</li>
+                    <li class="list-group-item">On Waitlist: {{ p.wait_list }}/{{ p.wait_cap }}</li>
+                    <li class="list-group-item">Location: {{ p.facility_description }}</li>
+                  </ul>
+                  <div class="card-body d-flex justify-content-between">
+                    <button type = "submit" class="btn btn-danger" name = "delete_course" value={{p.course_number}} onclick="return confirm('This course will be deleted from your schedule, are you sure you want to do this?')">Delete</button>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </form>
+          <hr class="solid">
+        </div>
+
+        <!-- Tuesday -->
+        <div class="container">
+          <h2>Tuesday</h2>
+          <form method="post">
+            <div class="row">
+              {% for p in tuesday_courses %}
+                {% csrf_token %}
+                <div class="card" style="width: 28rem;">
+                  <div class="card-body">
+                    <h4 class="card-title">{{ p.subject }} {{ p.catalog_number }} ({{ p.component }})</h4>
+                    <p class="card-text">{{p.description}}</p>
+                  </div>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Instructor: {{ p.instructor_name }}</li>
+                    <li class="list-group-item">Meet: {{ p.meetings_days }} {{ p.meetings_start_time }} - {{ p.meetings_end_time }}</li>
+                    <li class="list-group-item">Seats Available: {{ p.enrollment_available }}/{{ p.class_capacity }}</li>
+                    <li class="list-group-item">On Waitlist: {{ p.wait_list }}/{{ p.wait_cap }}</li>
+                    <li class="list-group-item">Location: {{ p.facility_description }}</li>
+                  </ul>
+                  <div class="card-body d-flex justify-content-between">
+                    <button type = "submit" class="btn btn-danger" name = "delete_course" value={{p.course_number}} onclick="return confirm('This course will be deleted from your schedule, are you sure you want to do this?')">Delete</button>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </form>
+          <hr class="solid">
+        </div>
+        
+        <!-- Wednesday -->
+        <div class="container">
+          <h2>Wednesday</h2>
+          <form method="post">
+            <div class="row">
+              {% for p in wednesday_courses %}
+                {% csrf_token %}
+                <div class="card" style="width: 28rem;">
+                  <div class="card-body">
+                    <h4 class="card-title">{{ p.subject }} {{ p.catalog_number }} ({{ p.component }})</h4>
+                    <p class="card-text">{{p.description}}</p>
+                  </div>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Instructor: {{ p.instructor_name }}</li>
+                    <li class="list-group-item">Meet: {{ p.meetings_days }} {{ p.meetings_start_time }} - {{ p.meetings_end_time }}</li>
+                    <li class="list-group-item">Seats Available: {{ p.enrollment_available }}/{{ p.class_capacity }}</li>
+                    <li class="list-group-item">On Waitlist: {{ p.wait_list }}/{{ p.wait_cap }}</li>
+                    <li class="list-group-item">Location: {{ p.facility_description }}</li>
+                  </ul>
+                  <div class="card-body d-flex justify-content-between">
+                    <button type = "submit" class="btn btn-danger" name = "delete_course" value={{p.course_number}} onclick="return confirm('This course will be deleted from your schedule, are you sure you want to do this?')">Delete</button>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </form>
+          <hr class="solid">
+        </div>
+
+        <!-- Thursday -->
+        <div class="container">
+          <h2>Thursday</h2>
+          <form method="post">
+            <div class="row">
+              {% for p in thursday_courses %}
+                {% csrf_token %}
+                <div class="card" style="width: 28rem;">
+                  <div class="card-body">
+                    <h4 class="card-title">{{ p.subject }} {{ p.catalog_number }} ({{ p.component }})</h4>
+                    <p class="card-text">{{p.description}}</p>
+                  </div>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Instructor: {{ p.instructor_name }}</li>
+                    <li class="list-group-item">Meet: {{ p.meetings_days }} {{ p.meetings_start_time }} - {{ p.meetings_end_time }}</li>
+                    <li class="list-group-item">Seats Available: {{ p.enrollment_available }}/{{ p.class_capacity }}</li>
+                    <li class="list-group-item">On Waitlist: {{ p.wait_list }}/{{ p.wait_cap }}</li>
+                    <li class="list-group-item">Location: {{ p.facility_description }}</li>
+                  </ul>
+                  <div class="card-body d-flex justify-content-between">
+                    <button type = "submit" class="btn btn-danger" name = "delete_course" value={{p.course_number}} onclick="return confirm('This course will be deleted from your schedule, are you sure you want to do this?')">Delete</button>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </form>
+          <hr class="solid">
+        </div>
+
+        <!-- Friday -->
+        <div class="container">
+          <h2>Friday</h2>
+          <form method="post">
+            <div class="row">
+              {% for p in friday_courses %}
+                {% csrf_token %}
+                <div class="card" style="width: 28rem;">
+                  <div class="card-body">
+                    <h4 class="card-title">{{ p.subject }} {{ p.catalog_number }} ({{ p.component }})</h4>
+                    <p class="card-text">{{p.description}}</p>
+                  </div>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Instructor: {{ p.instructor_name }}</li>
+                    <li class="list-group-item">Meet: {{ p.meetings_days }} {{ p.meetings_start_time }} - {{ p.meetings_end_time }}</li>
+                    <li class="list-group-item">Seats Available: {{ p.enrollment_available }}/{{ p.class_capacity }}</li>
+                    <li class="list-group-item">On Waitlist: {{ p.wait_list }}/{{ p.wait_cap }}</li>
+                    <li class="list-group-item">Location: {{ p.facility_description }}</li>
+                  </ul>
+                  <div class="card-body d-flex justify-content-between">
+                    <button type = "submit" class="btn btn-danger" name = "delete_course" value={{p.course_number}} onclick="return confirm('This course will be deleted from your schedule, are you sure you want to do this?')">Delete</button>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </form>
+          <hr class="solid">
+        </div>
+
+        <!-- Other -->
+        <div class="container">
+          <h2>Other</h2>
+          <form method="post">
+            <div class="row">
+              {% for p in other_courses %}
+                {% csrf_token %}
+                <div class="card" style="width: 28rem;">
+                  <div class="card-body">
+                    <h4 class="card-title">{{ p.subject }} {{ p.catalog_number }} ({{ p.component }})</h4>
+                    <p class="card-text">{{p.description}}</p>
+                  </div>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Instructor: {{ p.instructor_name }}</li>
+                    <li class="list-group-item">Meet: {{ p.meetings_days }} {{ p.meetings_start_time }} - {{ p.meetings_end_time }}</li>
+                    <li class="list-group-item">Seats Available: {{ p.enrollment_available }}/{{ p.class_capacity }}</li>
+                    <li class="list-group-item">On Waitlist: {{ p.wait_list }}/{{ p.wait_cap }}</li>
+                    <li class="list-group-item">Location: {{ p.facility_description }}</li>
+                  </ul>
+                  <div class="card-body d-flex justify-content-between">
+                    <button type = "submit" class="btn btn-danger" name = "delete_course" value={{p.course_number}} onclick="return confirm('This course will be deleted from your schedule, are you sure you want to do this?')">Delete</button>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </form>
+          <hr class="solid">
+        </div>
+        
+        <!-- see the total upvotes on the schedule-->
+        <div class="container">
+          <!-- title -->
+          <ul class="list-group list-group-horizontal">
+            <h2 style="width: 92rem;">Total Schedule Votes</h2>
+            &nbsp;&nbsp;
+            {% if user not in schedule.voted_users.all %}
+              <!-- upvotes -->
+              <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="friend_id" value={{ friend.id }}>
+                <input type="hidden" name="schedule_up" value={{ schedule.id }}>
+                <button type = "submit" class="btn" style="background-color: #bdd0b1;">Upvote</button>
+                &nbsp;
+              </form>
+
+              <!-- downvotes -->
+                <form method="post">
+                  {% csrf_token %}
+                  <input type="hidden" name="friend_id" value={{ friend.id }}>
+                  <input type="hidden" name="schedule_down" value={{ schedule.id }}>
+                  <button type = "submit" class="btn d-flex justify-content-end" style="background-color: #bdd0b1;">Downvote</button>
+                </form>
+            {% else %}
+              <li class="list-group-item bg-transparent border-0">Upvotes: {{schedule.ups}} &nbsp;&nbsp; Downvotes: {{schedule.downs}}
+            {% endif %}
+          </ul>
+          <hr class="rounded">
+        </div>
+
+      </div>
+      
+      <!-- show comments of my schedule and allow me to upvote or downvote -->
+      <div class="container">
+
+        <!-- title -->
+        <h1 class="d-flex justify-content-center">Comments</h1>
+        <br>
+
+        <!-- see comments on the friend's schedule -->
+        <div class="container">
+          {% for comment in comments %}
+            <ul class="list-group list-group-horizontal">
+              <li class="list-group-item bg-transparent border-success rounded" style="width: 92rem;">{{ comment.content }}</li>
+              &nbsp;&nbsp;
+              {% if user not in comment.voted_users.all %}
+
+                <!-- upvotes -->
+                <form method="post">
+                  {% csrf_token %}
+                  <input type="hidden" name="friend_id" value={{ friend.id }}>
+                  <input type="hidden" name="comment_up" value={{ comment.id }}>
+                  <button type = "submit" class="btn" style="background-color: #bdd0b1;">Upvote</button>
+                  &nbsp;
+                </form>
+
+                <!-- downvotes -->
+                <form method="post">
+                  {% csrf_token %}
+                  <input type="hidden" name="friend_id" value={{ friend.id }}>
+                  <input type="hidden" name="comment_down" value={{ comment.id }}>
+                  <button type = "submit" class="btn d-flex justify-content-end" style="background-color: #bdd0b1;">Downvote</button>
+                </form>
+
+              {% else %}
+                <li class="list-group-item bg-transparent border-0">Upvotes: {{comment.ups}} &nbsp;&nbsp; Downvotes: {{comment.downs}}
+              {% endif %}
+            </ul>
+          {% endfor %}
+          <br>
+        </div>
+
+    {% else %}
+      <a href="{% provider_login_url 'google' %}">Login with Google</a>
+    {% endif %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+  </body>
+
+</html>
